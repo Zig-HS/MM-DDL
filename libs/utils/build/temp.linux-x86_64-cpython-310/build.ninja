@@ -1,0 +1,24 @@
+ninja_required_version = 1.3
+cxx = c++
+
+cflags = -pthread -B /home/zcd/anaconda3/envs/torch2/compiler_compat -Wno-unused-result -Wsign-compare -DNDEBUG -fwrapv -O2 -Wall -fPIC -O2 -isystem /home/zcd/anaconda3/envs/torch2/include -fPIC -O2 -isystem /home/zcd/anaconda3/envs/torch2/include -fPIC -I/home/zcd/anaconda3/envs/torch2/lib/python3.10/site-packages/torch/include -I/home/zcd/anaconda3/envs/torch2/lib/python3.10/site-packages/torch/include/torch/csrc/api/include -I/home/zcd/anaconda3/envs/torch2/lib/python3.10/site-packages/torch/include/TH -I/home/zcd/anaconda3/envs/torch2/lib/python3.10/site-packages/torch/include/THC -I/home/zcd/anaconda3/envs/torch2/include/python3.10 -c
+post_cflags = -fopenmp -DTORCH_API_INCLUDE_EXTENSION_H '-DPYBIND11_COMPILER_TYPE="_gcc"' '-DPYBIND11_STDLIB="_libstdcpp"' '-DPYBIND11_BUILD_ABI="_cxxabi1011"' -DTORCH_EXTENSION_NAME=nms_1d_cpu -D_GLIBCXX_USE_CXX11_ABI=0 -std=c++17
+cuda_dlink_post_cflags = 
+ldflags = 
+
+rule compile
+  command = $cxx -MMD -MF $out.d $cflags -c $in -o $out $post_cflags
+  depfile = $out.d
+  deps = gcc
+
+
+
+
+
+build /data1/zcd/ijcai25/transformer_mulit/libs/utils/build/temp.linux-x86_64-cpython-310/csrc/nms_cpu.o: compile /data1/zcd/ijcai25/transformer_mulit/libs/utils/csrc/nms_cpu.cpp
+
+
+
+
+
+

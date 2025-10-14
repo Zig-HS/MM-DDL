@@ -1,0 +1,121 @@
+init_rand_seed: 42
+dataset_name: ijcai25testaudio
+devices: ['cuda:1',] # default: single gpu
+output_folder: ./ckpt/
+train_split: ['training', ]
+val_split: ['validation', ]
+model_name: "LocPointTransformer"
+loader: {
+    batch_size: 64,
+    num_workers: 64,
+}
+dataset: {
+  # type of feature ( WAV2VEC2_BASE|WAVLM_BASE|WAV2VEC2_LARGE|WAVLM_LARGE|None)
+  dataset_root: ./.dataset_test/,
+  ssl_model: WAVLM_LARGE,
+  clip_model: XCLIP-16,
+  num_classes: 1,
+  input_dim: 1024,         # 这里修改代码自动匹配
+  feat_stride: 1,
+  num_frames: 1,
+  trunc_thresh: 0.5,
+  crop_ratio: [0.9, 1.0],
+  max_seq_len: 1024,       # 这里修改代码自动匹配
+  featureMapIndex: 0,     # 选择Wav2Vec预特征来源的层数
+  downsample_rate: 1,
+}
+
+# network architecture
+model: {
+  use_lstm : True,        # 自行添加
+  with_Difference : True, # 自行添加
+  # type of backbone (convTransformer | conv)
+  backbone_type: 'convTransformer',
+  # type of FPN (fpn | identity)
+  fpn_type: fpn,
+  # defines the max length of the buffered points
+  max_buffer_len_factor: 16.0,
+  # window size for self attention; <=1 to use full seq (ie global attention)
+  n_mha_win_size: -1,
+  # disable abs position encoding (added to input embedding)
+  use_abs_pe: False,
+  # use rel position encoding (added to self-attention)
+  use_rel_pe: False,
+  # scale factor between pyramid levels
+  scale_factor: 2,
+  # number of heads in self-attention
+  n_head: 4,
+  # kernel size for embedding network
+  embd_kernel_size: 3,
+  # (output) feature dim for embedding network
+  embd_dim: 512,
+  # if attach group norm to embedding network
+  embd_with_ln: True,
+  # feat dim for FPN
+  fpn_dim: 512,
+  # if add ln at the end of fpn outputs
+  fpn_with_ln: True,
+  # starting level for fpn
+  fpn_start_level: 0,
+  # feat dim for head
+  head_dim: 512,
+  # kernel size for reg/cls/center heads
+  head_kernel_size: 3,
+  # number of layers in the head (including the final one)
+  head_num_layers: 3,
+  # if attach group norm to heads
+  head_with_ln: True,
+  backbone_arch: [2,1,5],
+  regression_range: [[0, 4], [4, 8], [8, 16], [16, 32], [32, 64], [64, 10000]]
+}
+train_cfg: {
+  init_loss_norm: 100,
+  cls_prior_prob: 0.01,
+  center_sample: radius,
+  center_sample_radius: 1.5,
+  # gradient cliping, not needed for pre-LN transformer
+  clip_grad_l2norm: 1.0,
+  # on reg_loss, use -1 to enable auto balancing
+  loss_weight: 1.0,
+  # cls head without data (a fix to epic-kitchens / thumos)
+  head_empty_cls: [],
+  # dropout ratios for tranformers
+  dropout: 0.0,
+  # ratio for drop path
+  droppath: 0.1,
+  # if to use label smoothing (>0.0)
+  label_smoothing: 0.0,
+}
+
+test_cfg: {
+  voting_thresh: 0.6,
+  pre_nms_topk: 2500,
+  max_seg_num: 35,    #最大段
+  min_score: 0.01,    #置信度阈值
+  iou_threshold: 0.01,
+  multiclass_nms: False,
+  nms_method: 'hard', # soft | hard | none
+  pre_nms_thresh: 0.001,
+  nms_sigma : 0.5,
+  duration_thresh: 0.05,
+  ext_score_file: None
+}
+# optimizer (for training)
+opt: {
+  # learning rate
+  learning_rate: 0.001,
+  # excluding the warmup epochs
+  epochs: 90,
+  weight_decay: 0.001,
+  # solver
+  type: "AdamW", # SGD or AdamW
+  # solver params
+  momentum: 0.9,
+  # lr scheduler: cosine / multistep
+  warmup: True,
+  warmup_epochs: 5,
+  schedule_type: "cosine",
+  # in #epochs excluding warmup
+  schedule_steps: [],
+  schedule_gamma: 0.1,
+}
