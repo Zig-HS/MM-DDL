@@ -1,6 +1,6 @@
 # Multi-modal Deepfake Detection and Localization with FPN-Transformer
 
-This repository contains official code for *Multi-modal Deepfake Detection and Localization with FPN-Transformer* for [IJCAI2025 Workshop on Deepfake Detection, Localization, and Interpretability](https://deepfake-workshop-ijcai2025.github.io/main/index.html).
+This repository contains official code for *Multi-modal Deepfake Detection and Localization with FPN-Transformer* for [IJCAI2025 Workshop on Deepfake Detection, Localization, and Interpretability](https://deepfake-workshop-ijcai2025.github.io/main/accepted_paper.html).
 
 ## Environment Setup
 
@@ -114,5 +114,6 @@ The pre-trained model weights of our method are provided as `./ckpt/ijcai25audio
 +   You can get and modify the detailed test parameters through `./configs_test/ijcai25audio-wavLM.yaml` and `./configs_test/ijcai25video-CLIP16.yaml`.
 
 ## Technical Documentation
+
 
 Please refer to `Technical-Documentation.PDF` in our submitted materials, which includes detailed information about *model architecture* and *implement details*.
